@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 
 def get_article(url):
     print('Crawling %s' % url)
-    time.sleep(5)
+    time.sleep(2)
     try:
         resp = urllib.request.urlopen(url)
         html = resp.read()
@@ -37,6 +37,7 @@ def get_article(url):
         # print(data)
     except Exception as e:
         print("strange in %s", url)
+        print(e)
         return
 
     with open('duanwenxue.txt', 'a') as f:
@@ -56,15 +57,16 @@ def crawl(url):
     try:
         resp = urllib.request.urlopen(url)
         html = str(resp.read().decode('gb18030'))
+        search_article = re.findall('href="(/article/[0-9]*.html)', html)
+        for article_address in search_article:
+            get_article('https://www.duanwenxue.com' + article_address)
+        search_next = re.search(u'<a href="(.*?)">\u4e0b\u4e00\u9875</a>', html)
+        new_url = re.sub('list.*', '', url) + search_next.group(1)
+        crawl(new_url)
     except Exception as e:
         print("failed in %s", url)
+        print(e)
         return
-    search_article = re.findall('href="(/article/[0-9]*.html)', html)
-    for article_address in search_article:
-        get_article('https://www.duanwenxue.com' + article_address)
-    search_next = re.search(u'<a href="(.*?)">\u4e0b\u4e00\u9875</a>', html)
-    new_url = re.sub('list.*', '', url) + search_next.group(1)
-    crawl(new_url)
 
 
 for address in address_list:
