@@ -51,18 +51,25 @@ def download_book(url, bid):
     try:
         html = urllib.request.urlopen(url).read()
         soup = BeautifulSoup(html, 'html.parser')
-        ab = soup.find('div', class_='volume-wrap')
-        chapter_list = re.finditer(
-            r'<li data-rid=".*?" data-eid="qd_G55" href="(.*?) target="_blank" title=".*?">(.*?)</a>', str(ab))
-        with open('books_qidian/' + bid + '.txt', 'w+') as f:
-            for chapter in chapter_list:
-                address_chapter = 'http:' + chapter.group(1)
-                name_chapter = chapter.group(2)
-                html_chapter = urllib.request.urlopen(address_chapter).read()
-                soup_chapter = BeautifulSoup(html_chapter, 'html.parser')
-                content_chapter = soup_chapter.find('div', class_="read-content j_readContent").get_text('\n')
-                f.write(name_chapter + '\n\n' + content_chapter + '\n')
-                print(name_chapter)
+
+        download = soup.find('a', class_='blue download', id='download')
+        if download:
+            download_address = 'http://download.qidian.com/epub/%s.epub' % bid
+            urllib.request.urlretrieve(download_address, filename='books_qidian/%s.epub' % bid)
+            print('epub downloaded')
+        else:
+            ab = soup.find('div', class_='volume-wrap')
+            chapter_list = re.finditer(
+                r'<li data-rid=".*?" data-eid="qd_G55" href="(.*?) target="_blank" title=".*?">(.*?)</a>', str(ab))
+            with open('books_qidian/' + bid + '.txt', 'w+') as f:
+                for chapter in chapter_list:
+                    address_chapter = 'http:' + chapter.group(1)
+                    name_chapter = chapter.group(2)
+                    html_chapter = urllib.request.urlopen(address_chapter).read()
+                    soup_chapter = BeautifulSoup(html_chapter, 'html.parser')
+                    content_chapter = soup_chapter.find('div', class_="read-content j_readContent").get_text('\n')
+                    f.write(name_chapter + '\n\n' + content_chapter + '\n')
+                    print(name_chapter)
     except Exception as e:
         raise e
 
