@@ -1,3 +1,4 @@
+# -*- coding:utf -8 -*-
 import json
 import urllib.request
 import re
@@ -31,7 +32,8 @@ def get_article(url):
             "content": content3,
             "author": search_author.group(1),
             "time": publish_date.group(),
-            "url": url
+            "url": url,
+            "category": article_type[i]
         }
         data = json.dumps(doc, ensure_ascii=False)
         # print(data)
@@ -49,6 +51,18 @@ address_list = [
     '/shanggan/ganrengushi/',
     '/qinggan/gushi/',
     '/sanwen/suibi/',
+    '/gushi/youmogushi/',
+    '/sanwen/jingdian/',
+    '/gushi/guigushi/'
+]
+
+article_type = [
+    '伤感日志',
+    '情感故事',
+    '散文随笔',
+    '幽默故事',
+    '经典散文',
+    '鬼故事'
 ]
 
 
@@ -62,12 +76,15 @@ def crawl(url):
             get_article('https://www.duanwenxue.com' + article_address)
         search_next = re.search(u'<a href="(.*?)">\u4e0b\u4e00\u9875</a>', html)
         new_url = re.sub('list.*', '', url) + search_next.group(1)
-        crawl(new_url)
+        if new_url:
+            return new_url
     except Exception as e:
         print("failed in %s", url)
         print(e)
         return
 
 
-for address in address_list:
-    crawl('https://www.duanwenxue.com' + address)
+for i in range(0, len(address_list)):
+    next_address = 'https://www.duanwenxue.com' + address_list[i]
+    while next_address:
+        next_address = crawl(next_address)
