@@ -27,12 +27,14 @@ def crawl(url):
         try:
             author = book.find(class_='author').find(class_='name')
             date = book.find(class_='update').find(class_='red')
+            category = book.find(class_='go-sub-type')
             doc = {
                 'bid': data_bid,
                 'title': name.next.text,
                 'author': author.text,
                 'time': date.text,
-                'url': book_address
+                'url': book_address,
+                'category': category.text
             }
             doc_write = json.dumps(doc, ensure_ascii=False)
             print(name.next.text)
@@ -76,7 +78,7 @@ def download_book(url, bid):
 isExists = os.path.exists('books_qidian')
 if not isExists:
     os.makedirs('books_qidian')
-for b in range(464, 1, -1):
+for b in range(464, 320, -1):
     url1 = "https://www.qidian.com/free/all?size=2&orderId=5&vip=hidden&style=1&pageSize=20&siteid=1&pubflag=0" \
            "&hiddenField=1&page=%d" % b
     crawl(url1)
