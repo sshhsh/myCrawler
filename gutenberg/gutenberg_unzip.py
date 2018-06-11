@@ -23,7 +23,7 @@ def un_zip(zip_name):
     for temp_root, temp_dirs, temp_files in os.walk("temp"):
         for temp_dir in temp_dirs:
             temp_path = os.path.join(temp_root, temp_dir)
-            os.removedirs(temp_path)
+            shutil.rmtree(temp_path)
 
 
 if not os.path.isdir("books_gutenberg"):
