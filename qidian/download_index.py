@@ -10,7 +10,7 @@ with open("qidian_index.txt", "w") as f:
     }, scroll="10m")
     scroll_id = res['_scroll_id']
     for hit in progressbar.progressbar(res['hits']['hits']):
-        f.write(str(hit))
+        f.write(str(hit["_source"]))
         f.write('\n')
 
     while True:
@@ -19,7 +19,7 @@ with open("qidian_index.txt", "w") as f:
         if length == 0:
             break
         for hit in progressbar.progressbar(res['hits']['hits']):
-            f.write(str(hit))
+            f.write(str(hit["_source"]))
             f.write('\n')
 
 
