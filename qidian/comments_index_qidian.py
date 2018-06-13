@@ -12,7 +12,13 @@ with open("qidian_comments.txt") as f:
 
         bid = book['id']
         del book['id']
+        doc = {
+            "doc": {
+                "comments": book['content']
+            }
+        }
         try:
-            es.create(index='comments', id=bid, doc_type='comment', body=book)
+            es.update(index='ebooks', doc_type='book', id=bid, body=doc)
+            # es.create(index='comments', id=bid, doc_type='comment', body=book)
         except Exception as e:
             print(e)
